@@ -2,6 +2,12 @@
 
 stiglerdiet-front/node_modules/
 stiglerdiet-front/public/build/
+stiglerdiet-front/.idea
+stiglerdiet-front/.eslintcache
+stiglerdiet-front/.env.test
+stiglerdiet-front/.dist
+stiglerdiet-front/.vercel
+
 stiglerdiet-front/.env
 stiglerdiet-front/.svelte-kit/
 stiglerdiet-front/.vscode/
@@ -16,3 +22,6 @@ stiglerdiet-api/foods.db
 stiglerdiet-api/foods.db-shm
 stiglerdiet-api/foods.db-wal
 stiglerdiet-api/*.secrets.json
+stiglerdiet-api/stiglerdiet.sln
+
+.DS_Store
