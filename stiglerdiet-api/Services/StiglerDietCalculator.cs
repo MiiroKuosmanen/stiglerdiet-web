@@ -33,8 +33,7 @@ public class StiglerDietCalculator
         {
             foods.Add(solver.MakeNumVar(0.0, double.PositiveInfinity, data[i].Name));
         }
-        //create json object that contains variables, constrai
-        ///Console.WriteLine($"Number of variables = {solver.NumVariables()}");
+        Console.WriteLine($"Number of variables = {solver.NumVariables()}");
         List<Constraint> constraints = new List<Constraint>();
         for (int i = 0; i < nutrients.Length; ++i)
         {
@@ -46,8 +45,8 @@ public class StiglerDietCalculator
             }
             constraints.Add(constraint);
         }
-        result.Constraints = constraints.Count;
-        ///Console.WriteLine($"Number of constraints = {solver.NumConstraints()}");
+
+        Console.WriteLine($"Number of constraints = {solver.NumConstraints()}");
 
         Objective objective = solver.Objective();
         for (int i = 0; i < data.Length; ++i)
@@ -81,10 +80,10 @@ public class StiglerDietCalculator
             if (foods[i].SolutionValue() > 0.0)
             {
                 Console.WriteLine($"{data[i].Name}: ${365 * foods[i].SolutionValue():N2}");
-                result.Foods = new AnnualFoods {
-                    Name = nutrients[i].Name,
-                    Price = nutrients[i].Value
-                };
+                if (result.Foods == null) {
+                    result.Foods = new List<FoodList>();
+                }
+                result.Foods.Add(new FoodList { Name = data[i].Name, Price = 365 * foods[i].SolutionValue() });
                 for (int j = 0; j < nutrients.Length; ++j)
                 {
                     nutrientsResult[j] += data[i].Nutrients[j] * foods[i].SolutionValue();
@@ -96,17 +95,25 @@ public class StiglerDietCalculator
         Console.WriteLine("\nNutrients per day:");
         for (int i = 0; i < nutrients.Length; ++i)
         {
+            if (result.Nutrients == null)
+            {
+                result.Nutrients = new Dictionary<string, NutrientsPerDay>();
+            }
+            result.Nutrients.Add( nutrients[i].Name, new NutrientsPerDay { Value = nutrientsResult[i], MinValue = nutrients[i].Value });
             Console.WriteLine($"{nutrients[i].Name}: {nutrientsResult[i]:N2} (min {nutrients[i].Value})");
         }
 
         Console.WriteLine("\nAdvanced usage:");
         Console.WriteLine($"Problem solved in {solver.WallTime()} milliseconds");
         Console.WriteLine($"Problem solved in {solver.Iterations()} iterations");
-        result.Advanced = new AdvancedUsage
+        if (result.Advanced is null)
         {
-            SolvedTime = solver.WallTime(),
-            SolvedIterations = solver.Iterations()
-        };
+            result.Advanced = new AdvancedUsage();
+        }
+        result.Advanced.SolvedIterations = solver.Iterations();
+        result.Advanced.SolvedTimeMilliseconds = solver.WallTime();
+        result.Advanced.Constraints = constraints.Count;
+        result.Advanced.Variables = solver.NumVariables();
         return result;
     }
 }

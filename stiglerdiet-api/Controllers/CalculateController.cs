@@ -24,6 +24,10 @@ namespace stiglerdiet.Controllers
         {
             var foods = _context.Foods.ToList();
             var result = _calculator.CalculateDiet(calculate, foods);
+            if (result == null)
+            {
+                return BadRequest();
+            }
             return Ok(result);
         } 
     }
