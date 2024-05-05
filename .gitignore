@@ -1,0 +1,18 @@
+# .gitignore
+
+stiglerdiet-front/node_modules/
+stiglerdiet-front/public/build/
+stiglerdiet-front/.env
+stiglerdiet-front/.svelte-kit/
+stiglerdiet-front/.vscode/
+stiglerdiet-api/bin/
+stiglerdiet-api/obj/
+stiglerdiet-api/*.user
+stiglerdiet-api/*.suo
+
+stiglerdiet-api/.vscode/
+
+stiglerdiet-api/foods.db
+stiglerdiet-api/foods.db-shm
+stiglerdiet-api/foods.db-wal
+stiglerdiet-api/*.secrets.json
