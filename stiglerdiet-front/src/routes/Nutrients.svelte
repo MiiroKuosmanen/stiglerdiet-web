@@ -34,6 +34,32 @@
     // Function to handle form submission
     async function handleSubmit() {
         try {
+            const anyCheckboxEmpty = Object.entries(formData).some(([key, value]) => {
+                const checkbox = document.querySelector(`input[name="${key}"][type="checkbox"]`);
+                if (checkbox && checkbox.checked && (!value || isNaN(value) || value <= 0)) {
+                    return true;
+                }
+                return false;
+            });
+
+            if (anyCheckboxEmpty) {
+                alert('Syötä arvo 0-9999 valituille ravinteille');
+                return;
+            }
+
+            // Check if at least one checkbox is checked and its associated input field contains a valid value
+            const anyValidCheckboxChecked = Object.entries(formData).some(([key, value]) => {
+                const checkbox = document.querySelector(`input[name="${key}"][type="checkbox"]`);
+                if (checkbox && checkbox.checked && (!isNaN(value) && value > 0)) {
+                    return true;
+                }
+                return false;
+            });
+            if (!anyValidCheckboxChecked) {
+            alert('Valitse ainakin yksi ravinne ja syötä sille arvo');
+            return;
+            }
+
             const response = await fetch('http://localhost:5126/api/Calculate', {
                 method: 'POST',
                 headers: {
@@ -57,18 +83,6 @@
             console.error('Network error:', error);
         }
     }
-
-    // Function to initialize formData based on checkbox state on mount
-    function initializeFormData() {
-        Object.keys(formData).forEach(key => {
-            const input = document.querySelector(`input[name="${key}"][type="checkbox"]`);
-            if (input && input.checked) {
-                formData[key] = parseFloat(document.querySelector(`input[name="${key}"][type="number"]`).value) || 0;
-            }
-        });
-}
-
-    onMount(initializeFormData);
 
 </script>
 

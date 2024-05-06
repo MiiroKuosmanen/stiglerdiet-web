@@ -14,23 +14,23 @@
             </label>
 			<label>
                 Kcal:
-                <input type="number" bind:value="{newFood.calories}" />
+                <input type="number" step="0.01" bind:value="{newFood.calories}" />
             </label>
             <label>
                 Hiilihydraatit:
-                <input type="number" bind:value="{newFood.carbohydrates}" />
+                <input type="number" step="0.01" bind:value="{newFood.carbohydrates}" />
             </label>
             <label>
                 Proteiini:
-                <input type="number" bind:value="{newFood.protein}" />
+                <input type="number" step="0.01" bind:value="{newFood.protein}" />
             </label>
             <label>
                 Rasva:
-                <input type="number" bind:value="{newFood.fat}" />
+                <input type="number" step="0.01" bind:value="{newFood.fat}" />
             </label>
             <label>
                 Kuitu:
-                <input type="number" bind:value="{newFood.fiber}" />
+                <input type="number" step="0.01" bind:value="{newFood.fiber}" />
             </label>
 			<label>
                 Hinta(€):
@@ -56,6 +56,7 @@
 				throw new Error('Failed to fetch foods from the API');
 			}
 			const data = await response.json();
+            data.forEach(food => food.checked = food.checkBox || false);
 			foods.set(data);
 		} catch (error) {
 			console.error(error);
@@ -64,6 +65,11 @@
 
 	const handleAddFood = async () => {
         try {
+            if (!newFood.name || !newFood.calories || !newFood.carbohydrates || !newFood.protein || !newFood.fat || !newFood.fiber || !newFood.price) {
+            alert('Täytä kaikki kentät jatkaaksesi'); 
+            return; 
+            }
+
 			const id = Date.now(); //Spaghettisolution, could be improved
 			newFood.id = id;
 
@@ -108,7 +114,7 @@
 
     const handleCheckboxChange = async (id) => {
         const food = $foods.find(food => food.id === id);
-        food.checkbox = !food.checkbox;
+        food.checkBox = !food.checkBox;
         try {
             const response = await fetch(`http://localhost:5126/api/Foods/${id}`, {
                 method: 'PUT',
@@ -125,7 +131,16 @@
         }
     };
 
-	onMount(fetchFoods);
+	onMount(async () => {
+        fetchFoods(); 
+        // Update checkbox state based on the checkBox property in fetched data
+        foods.update(items => {
+            return items.map(item => {
+                item.checked = item.checkBox || false; // Set checked property based on checkBox property
+                return item;
+            });
+        });
+    });
 </script>
 
 <section>
@@ -156,7 +171,7 @@
 					<tr>
 
                         <td style="padding-right: 10px; text-align: center;">
-                            <input type="checkbox" on:change={() => handleCheckboxChange(food.id)} />
+                            <input type="checkbox" bind:checked={food.checked} on:change={() => handleCheckboxChange(food.id)} />
                         </td>
 						<td>{food.name}</td> 
 						<td style="padding-left: 10px;">{food.calories}</td> 
