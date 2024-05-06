@@ -1,6 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-
+    import { writable } from 'svelte/store';
     let formData = {
         calories: 0,
         protein: 0,
@@ -8,6 +8,9 @@
         fat: 0,
         fiber: 0
     };
+
+    let results = writable([]);
+    let formSubmitted = false;
 
      // Function to handle checkbox change event
      function handleCheckboxChange(event) {
@@ -41,6 +44,10 @@
             if (response.ok) {
                 // Handle successful response
                 console.log('Calculation successful');
+                const data = await response.json();
+                results.set(data);
+                console.log($results);
+                formSubmitted = true;
             } else {
                 // Handle error response
                 console.error('Calculation failed:', response.statusText);
@@ -70,10 +77,10 @@
         Kalorit <input type="checkbox" name="calories" on:change={handleCheckboxChange}> <input type="number" name="calories" min="0" max="9999" on:input={handleInputChange}>
     </li>
     <li>
-        Hiilihydraatit <input type="checkbox" name="carbohydrates" on:change={handleCheckboxChange}> <input type="number" name="carbohydrates" min="0" max="9999" on:input={handleInputChange}>
+        Proteiini <input type="checkbox" name="protein" on:change={handleCheckboxChange}> <input type="number" name="protein" min="0" max="9999" on:input={handleInputChange}>
     </li>
     <li>
-        Proteiini <input type="checkbox" name="protein" on:change={handleCheckboxChange}> <input type="number" name="protein" min="0" max="9999" on:input={handleInputChange}>
+        Hiilihydraatit <input type="checkbox" name="carbohydrates" on:change={handleCheckboxChange}> <input type="number" name="carbohydrates" min="0" max="9999" on:input={handleInputChange}>
     </li>
     <li>
         Rasvat <input type="checkbox" name="fat" on:change={handleCheckboxChange}> <input type="number" name="fat" min="0" max="9999" on:input={handleInputChange}>
@@ -82,9 +89,54 @@
         Kuitu <input type="checkbox" name="fiber" on:change={handleCheckboxChange}> <input type="number" name="fiber" min="0" max="9999" on:input={handleInputChange}>
     </li>
 </ul>
+
+{#if formSubmitted}
+    <h1 class="result-header">Tulos:</h1>
+    <h2 style="font-weight: bold; text-decoration: underline;">Vuoden ruoka-aineet & niiden hinta</h2>
+    <div class="results">
+        <div class = left-col>
+            {#each $results.foods as food}
+            <p>{food.name}</p> <!-- Adjust this to display the specific data you want -->
+            {/each}
+        </div>
+        <div class = right-col>
+            {#each $results.foods as food}
+            <p>{food.price.toFixed(2)}€</p> <!-- Adjust this to display the specific data you want -->
+             {/each}
+        </div> 
+    </div>
+    <h2 style="font-weight: bold; ">Yhteensä: {$results.optimalAnnualPrice.toFixed(2)}€</h2>
+
+    <h2 style="font-weight: bold; margin-top: 20px; text-decoration: underline;">Ravinteet per päivä</h2>
+    <div class="results">
+        <div class = left-col>
+                <!-- If we wanted to actually get every key name from the JSON, however this prints the names as they are in the database, in English.
+                {#each Object.keys($results.nutrients) as nutrient}
+                <p>{nutrient}</p>
+                {/each} -->
+            <p>Kalorit</p>    
+            <p>Proteiini</p>    
+            <p>Hiilihydraatit</p>    
+            <p>Rasvat</p>    
+            <p>Kuitu</p>    
+        </div>
+        <div class = right-col>
+            {#each Object.keys($results.nutrients) as nutrient}
+            <p>{$results.nutrients[nutrient].value.toFixed(2)} (g)</p> <!-- Adjust this to display the specific data you want -->
+            {/each}
+        </div> 
+    </div>
+{/if}
+    
+{#if !formSubmitted}
 <div class="calc-button">
     <button on:click={handleSubmit}>Laske</button>
 </div>
+{:else}
+<div class="calc-button">
+    <button on:click={handleSubmit}>Laske uudelleen</button>
+</div>
+{/if}
 
 <style>
     ul {
@@ -119,14 +171,32 @@
     }
     .calc-button {
         margin-top: 40px;
-        text-align: center;  
-        cursor: pointer; 
+        text-align: center;
+        cursor: pointer;
+         
     }
     
     button {
-        width: 120px; 
+        width: 180px; 
         height: 40px; 
         font-size: 18px;
-        cursor: pointer; 
+        cursor: pointer;
+         
+    }
+    .results {
+    display: grid;
+    grid-template-columns: repeat(2, auto); /* Adjust the number of columns as needed */
+    gap: 10px; /* Gap between columns */
+    }
+
+    .left-col  {
+        text-align: left;
+    }
+    .right-col {
+        text-align: right;
+    }
+    .left-col p,
+    .right-col p {
+        margin: 5px 0; /* Adjust the margin to close the vertical gap */
     }
 </style>
