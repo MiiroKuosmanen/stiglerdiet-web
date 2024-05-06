@@ -22,7 +22,8 @@ namespace stiglerdiet.Controllers
         [HttpPost]
         public IActionResult PostCalculate(Calculate calculate)
         {
-            var foods = _context.Foods.ToList();
+            var foods = _context.Foods.ToList().Where(f => f.CheckBox == true).ToList();
+
             var result = _calculator.CalculateDiet(calculate, foods);
             if (result == null)
             {

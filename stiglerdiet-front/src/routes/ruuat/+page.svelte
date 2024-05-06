@@ -106,6 +106,25 @@
         }
     };
 
+    const handleCheckboxChange = async (id) => {
+        const food = $foods.find(food => food.id === id);
+        food.checkbox = !food.checkbox;
+        try {
+            const response = await fetch(`http://localhost:5126/api/Foods/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(food)
+            });
+            if (!response.ok) {
+                throw new Error('Failed to update food item');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
 	onMount(fetchFoods);
 </script>
 
@@ -135,7 +154,10 @@
 			<tbody>
 				{#each $foods as food}
 					<tr>
-						<td style="padding-right: 10px; text-align: center;"><input type="checkbox" /></td> <!-- Checkbox -->
+
+                        <td style="padding-right: 10px; text-align: center;">
+                            <input type="checkbox" on:change={() => handleCheckboxChange(food.id)} />
+                        </td>
 						<td>{food.name}</td> 
 						<td style="padding-left: 10px;">{food.calories}</td> 
 						<td>{food.carbohydrates}</td> 

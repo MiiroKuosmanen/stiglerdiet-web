@@ -10,4 +10,5 @@ public class Food
     public double Carbohydrates { get; set; }
     public double Fat { get; set; }
     public double Fiber { get; set; }
+    public bool CheckBox { get; set; }
 }
