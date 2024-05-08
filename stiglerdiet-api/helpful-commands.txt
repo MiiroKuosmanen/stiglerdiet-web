@@ -1,0 +1,11 @@
+
+docker build --no-cache -t stiglerdiet . 
+docker run -d -p 8080:8080 --name myapp stiglerdiet
+
+docker logs myapp
+
+docker stop myapp
+docker container prune
+
+docker rmi -f stiglerdiet
+docker image prune
