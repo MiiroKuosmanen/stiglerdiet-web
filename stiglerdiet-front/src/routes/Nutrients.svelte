@@ -141,14 +141,14 @@
                 <p>{nutrient}</p>
                 {/each} -->
             <p>Kalorit</p>    
-            <p>Proteiini</p>    
-            <p>Hiilihydraatit</p>    
-            <p>Rasvat</p>    
-            <p>Kuitu</p>    
+            <p>Proteiini (g)</p>    
+            <p>Hiilihydraatit (g)</p>    
+            <p>Rasvat (g)</p>    
+            <p>Kuitu (g)</p>    
         </div>
         <div class = right-col>
             {#each Object.keys($results.nutrients) as nutrient}
-            <p>{$results.nutrients[nutrient].value.toFixed(2)} (g)</p> <!-- Adjust this to display the specific data you want -->
+            <p>{$results.nutrients[nutrient].value.toFixed(2)}</p> <!-- Adjust this to display the specific data you want -->
             {/each}
         </div> 
     </div>
