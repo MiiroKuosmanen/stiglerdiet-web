@@ -16,7 +16,13 @@
      function handleCheckboxChange(event) {
     const { name, checked } = event.target;
     if (checked) {
-        formData[name] = parseFloat(document.querySelector(`input[name="${name}"][type="number"]`).value) || 0;
+        const input = document.querySelector(`input[name="${name}"][type="number"]`);
+        if (input && parseFloat(input.value) > 9999) {
+            input.value = '9999'; // Set the value to the maximum allowed value
+            formData[name] = 9999;
+        } else {
+            formData[name] = parseFloat(input.value) || 0;
+        }
     } else {
         formData[name] = 0; // Set to 0 if unchecked
     }
@@ -27,7 +33,13 @@
         const { name, value } = event.target;
         const checkbox = document.querySelector(`input[name="${name}"][type="checkbox"]`);
         if (checkbox && checkbox.checked) {
-                formData[name] = parseFloat(value) || 0;
+            const parsedValue = parseFloat(value);
+        if (parsedValue > 9999) {
+            event.target.value = '9999'; // Set the value to the maximum allowed value
+            formData[name] = 9999;
+        } else {
+            formData[name] = parsedValue || 0;
+        }
     }
     }
 

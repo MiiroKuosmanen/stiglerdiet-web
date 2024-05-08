@@ -65,10 +65,16 @@
 
 	const handleAddFood = async () => {
         try {
-            if (!newFood.name || !newFood.calories || !newFood.carbohydrates || !newFood.protein || !newFood.fat || !newFood.fiber || !newFood.price) {
-            alert('Täytä kaikki kentät jatkaaksesi'); 
-            return; 
-            }
+            if (!newFood.name || 
+            newFood.calories < 0 || newFood.calories > 9999 ||
+            newFood.carbohydrates < 0 || newFood.carbohydrates > 9999 ||
+            newFood.protein < 0 || newFood.protein > 9999 ||
+            newFood.fat < 0 || newFood.fat > 9999 ||
+            newFood.fiber < 0 || newFood.fiber > 9999 ||
+            newFood.price < 0 || newFood.price > 9999) {
+            alert('Täytä kaikki kentät jatkaaksesi ja varmista, että ravinteiden arvot ovat välillä 0-9999.');
+            return;
+        }
 
 			const id = Date.now(); //Spaghettisolution, could be improved
 			newFood.id = id;
